@@ -1,6 +1,6 @@
 import Navbar from "@/componenets/Navbar";
 
-export default function newScan (){
+export default function newscan (){
     return (
         <div>
             <Navbar/>
