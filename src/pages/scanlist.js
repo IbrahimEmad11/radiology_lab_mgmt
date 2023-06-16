@@ -92,7 +92,7 @@ export default function Scanlist() {
             </td>
             <td className="px-4 py-3 text-sm font-normal text-gray-900 whitespace-nowrap">
               {/* Add actions for each row */}
-              <button className="text-blue-500 hover:text-blue-600">show  scan</button>
+              <a href= '/viewscan/<id>' className="text-blue-500 hover:text-blue-600">View Scan</a>
             </td>
           </tr>
           {/* Add more table rows as needed */}
