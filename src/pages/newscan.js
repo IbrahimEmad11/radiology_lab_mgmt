@@ -1,6 +1,6 @@
 import Navbar from "@/componenets/Navbar";
-import SelectSex from "@/componenets/SelectSex";
-import DoctorMenu from "@/componenets/DoctorMenu";
+import SelectSex from "src/componenets/SelectSex";
+import DoctorMenu from "src/componenets/DoctorMenu";
 import ScanType from "@/componenets/Scantype";
 
 const handleSubmit = (e) => {

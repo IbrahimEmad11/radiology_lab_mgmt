@@ -120,7 +120,7 @@ export default function Scanlist() {
                 <td className="px-4 py-3 text-sm font-normal text-gray-900 whitespace-nowrap">
                   {/* Add actions for each row */}
                   <Link
-                    href={`/ViewScan`}
+                    href={`/viewscan`}
                     className="text-blue-500 hover:text-blue-600"
                   >
                     View Scan
