@@ -1,4 +1,4 @@
-import Navbar from "@/componenets/Navbar";
+import Sidebar from "@/componenets/Sidebar";
 
 export default function ViewScan({date, patient_name, sex, age, doctor_name, type, imgs_urls, results}){
 
@@ -14,9 +14,9 @@ export default function ViewScan({date, patient_name, sex, age, doctor_name, typ
     }
 
     return(
-        <div>
-            <Navbar/>
-            <div className="m-10">
+        <div className="flex">
+            <Sidebar/>
+            <div className="ml-72 mr-8 container mx-auto my-8">
                 <section className="mt-5 max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
                     <h1 className="text-lg font-semibold text-gray-700 capitalize dark:text-white">Scan Page</h1>
 

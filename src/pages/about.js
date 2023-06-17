@@ -1,9 +1,9 @@
-import Navbar from "@/componenets/Navbar";
+import Sidebar from "@/componenets/Sidebar";
 
 export default function About() {
   return (
     <div>
-      <Navbar />
+      <Sidebar />
     </div>
   )
 }
