@@ -1,6 +1,20 @@
-import Sidebar from "@/componenets/Sidebar";
+import Sidebar from "@/componenets/Sidebar"
 import Link from "next/link"
-export default function Scanlist() {
+import { supabase } from "@/managers/supabase"
+
+export const getServerSideProps = async () => {
+  const { data, error } = await supabase
+    .from("scans")
+    .select()
+  return {
+    props: {
+      scansData: data ?? []
+    }
+  }
+}
+
+export default function Scanlist({ scansData }) {
+
   return (
     <div className="flex">
       <Sidebar currentLinkId={0} />
@@ -104,7 +118,6 @@ export default function Scanlist() {
                       Scan Type
                     </th>
 
-
                     <th scope="col"
                         className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                       Assigned Doctor
@@ -118,34 +131,45 @@ export default function Scanlist() {
                   </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                  <tr>
-                    <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
-                      <div>
-                        <h2 className="font-medium text-gray-800 dark:text-white ">Amir Hesham</h2>
-                        <p className="text-sm font-normal text-gray-600 dark:text-gray-400">21 Years</p>
-                      </div>
-                    </td>
-                    <td className="px-12 py-4 text-sm font-medium whitespace-nowrap">
-                      <div
-                        className="inline px-3 py-1 text-sm font-normal rounded-full text-emerald-500 gap-x-2 bg-emerald-100/60 dark:bg-gray-800">
-                        Completed
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 text-sm whitespace-nowrap">
-                      <div>
-                        <h4 className="text-gray-700 dark:text-gray-200">Magnetic Resonance Imaging</h4>
-                        <p className="text-gray-500 dark:text-gray-400">Back and Shoulders</p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 text-sm whitespace-nowrap">
-                      <div>
-                        <h4 className="text-gray-700 dark:text-gray-200">Dr. Metwally Ahmed</h4>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 text-sm whitespace-nowrap">
-                      <p className="text-gray-500 dark:text-gray-300">17 Jun 2023</p>
-                    </td>
-                  </tr>
+                    { scansData.map(scan => {
+                      const scanDateString = new Date(scan["scan_date"]).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+                      const scanStatus = {
+                        asString: Boolean(scan["scan_completed"]) === true ? "Completed" : "In Progress",
+                        style: Boolean(scan["scan_completed"]) === true
+                          ? "inline px-3 py-1 text-sm font-normal rounded-full text-emerald-500 gap-x-2 bg-emerald-100/60 dark:bg-gray-800"
+                          : "inline px-3 py-1 text-sm font-normal text-gray-500 bg-gray-100 rounded-full dark:text-gray-400 gap-x-2 dark:bg-gray-800"
+                      }
+                      return (
+                        <tr>
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                            <div>
+                              <h2 className="font-medium text-gray-800 dark:text-white ">{scan["subject_name"]}</h2>
+                              <p className="text-sm font-normal text-gray-600 dark:text-gray-400">21 Years | {scan["subject_sex"]}</p>
+                            </div>
+                          </td>
+                          <td className="px-12 py-4 text-sm font-medium whitespace-nowrap">
+                            <div
+                              className={scanStatus.style}>
+                              {scanStatus.asString}
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-sm whitespace-nowrap">
+                            <div>
+                              <h4 className="text-gray-700 dark:text-gray-200">{scan["scan_type"]}</h4>
+                              <p className="text-gray-500 dark:text-gray-400">{scan["scan_part"]}</p>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-sm whitespace-nowrap">
+                            <div>
+                              <h4 className="text-gray-700 dark:text-gray-200">{`Dr. ${scan["scan_doctor"]}`}</h4>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-sm whitespace-nowrap">
+                            <p className="text-gray-500 dark:text-gray-300">{scanDateString}</p>
+                          </td>
+                        </tr>
+                      )
+                    }) }
                   </tbody>
                 </table>
               </div>
@@ -188,3 +212,5 @@ export default function Scanlist() {
     </div>
   );
 }
+
+
