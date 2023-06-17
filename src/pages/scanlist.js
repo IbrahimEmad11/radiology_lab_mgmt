@@ -37,7 +37,7 @@ const scans = [
 export default function Scanlist() {
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar currentLinkId={0} />
       <div className="ml-72 mr-8 container mx-auto p-10">
         <h1 className="text-2xl">Scans List</h1>
         {/* adding search bar */}

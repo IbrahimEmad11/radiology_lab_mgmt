@@ -41,7 +41,7 @@ const navigationLinks = [
   },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ currentLinkId }) {
   return (
     <aside
       className="flex fixed flex-col min-w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
@@ -66,7 +66,7 @@ export default function Sidebar() {
       <div className="flex flex-col justify-between flex-1 mt-6">
         <nav>
           {/*<a*/}
-          {/*  className="flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-md dark:bg-gray-800 dark:text-gray-200"*/}
+          {/*  className=""*/}
           {/*  href="#">*/}
           {/*  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
           {/*    <path*/}
@@ -79,16 +79,21 @@ export default function Sidebar() {
 
 
           {
-            navigationLinks.map(link => (
-              <Link
-                key={link.id}
-                className="flex items-center px-4 py-2 mb-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
-                href={link.href}>
-                {link.icon}
+            navigationLinks.map(link => {
+              const style = currentLinkId === link.id
+                ? "flex items-center px-4 py-2 mb-5 text-gray-700 bg-gray-100 rounded-md dark:bg-gray-800 dark:text-gray-200"
+                : "flex items-center px-4 py-2 mb-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
 
-                <span className="mx-4 font-medium">{link.name}</span>
-              </Link>
-            ))
+              return (
+                <Link
+                  key={link.id}
+                  className={style}
+                  href={link.href}>
+                  {link.icon}
+                  <span className="mx-4 font-medium">{link.name}</span>
+                </Link>
+              )
+            })
           }
 
           <hr className="my-6 border-gray-200 dark:border-gray-600"/>
