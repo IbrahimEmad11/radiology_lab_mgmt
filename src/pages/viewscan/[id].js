@@ -1,4 +1,6 @@
 import Sidebar from "@/componenets/Sidebar";
+import SelectStatus from "@/componenets/Status";
+import Status from "@/componenets/Status";
 import {supabase} from "@/managers/supabase";
 
 export const getServerSideProps = async ({ params }) => {
@@ -56,6 +58,10 @@ export default function ViewScan({ scanData }) {
                 <label className="text-gray-700 dark:text-gray-200">Assigned Doctor</label>
                 <p
                   className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 ">{scanData["scan_doctor"]}</p>
+              </div>
+              
+              <div>
+              <SelectStatus className="text-gray-700 dark:text-gray-200" htmlFor="Status">Status</SelectStatus>
               </div>
 
               <div className="col-start-1 row-end-5 mb-10">

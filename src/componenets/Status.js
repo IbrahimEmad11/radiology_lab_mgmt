@@ -2,14 +2,14 @@ import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-const genders = [
+const Status = [
   {
     id: 1,
-    name: 'Male',
+    name: 'Completed',
   },
   {
     id: 2,
-    name: 'Female',
+    name: 'In Progress',
   },
 ]
 
@@ -17,18 +17,18 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function SelectSex() {
-  const [selected, setSelected] = useState(genders[1])
-  const handleSelection = (gender) => {
-    setSelected(gender);
+export default function SelectStatus() {
+  const [selected, setSelected] = useState(Status[1])
+  const handleSelection = (State) => {
+    setSelected(State);
     // Here, you can perform any actions with the selected value, such as adding it to your database.
-    console.log('Selected gender:', gender);
+    console.log('Selected State:', State);
   };
   return (
     <Listbox value={selected} onChange={handleSelection}>
       {({ open }) => (
         <>
-          <Listbox.Label className="text-gray-700 dark:text-gray-200">Done by</Listbox.Label>
+          <Listbox.Label className="text-gray-700 dark:text-gray-200">Status</Listbox.Label>
           <div className="relative mt-2">
             <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 dark:text-gray-200 dark:bg-gray-800 dark:ring-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
               <span className="flex items-center">
@@ -47,16 +47,16 @@ export default function SelectSex() {
               leaveTo="opacity-0"
             >
               <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:text-gray-200 dark:bg-gray-800 dark:ring-gray-200">
-                {genders.map((gender) => (
+                {Status.map((State) => (
                   <Listbox.Option
-                    key={gender.id}
+                    key={State.id}
                     className={({ active }) =>
                       classNames(
                         active ? 'bg-indigo-600 text-white' : 'text-gray-900' , 'dark:text-white',
                         'relative cursor-default select-none py-2 pl-3 pr-9'
                       )
                     }
-                    value={gender}
+                    value={State}
                   >
                     {({ selected, active }) => (
                       <>
@@ -64,7 +64,7 @@ export default function SelectSex() {
                           <span
                             className={classNames(selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}
                           >
-                            {gender.name}
+                            {State.name}
                           </span>
                         </div>
 
