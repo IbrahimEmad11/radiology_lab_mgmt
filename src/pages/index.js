@@ -5,7 +5,7 @@ export default function Login() {
   return (
     <>
      <Head>
-       <title>Resonance | Login to your account</title>
+       <title>ResonanceM | Login to your account</title>
      </Head>
       <main>
 
