@@ -6,26 +6,58 @@ import DoctorMenu from "src/componenets/DoctorMenu"
 import ScanType from "@/componenets/Scantype"
 import { supabase } from "@/managers/supabase"
 import {useState} from "react"
+import { useRef } from "react"
+
+
+
+
 
 const handleSubmit = (e) => {
     e.preventDefault();
 }
 
 export default function Newscan (){
+
     const { register, handleSubmit, formState: { errors }, reset } = useForm()
-
     const [successAlertIsVisible, setSuccessAlertIsVisible] = useState(false)
+    const imageInputRef = useRef();
 
-    const onSubmit = async data => {
-        const { error } = await supabase
-          .from("scans")
-          .insert(data)
-        setSuccessAlertIsVisible(true)
-        reset()
+    const onSubmit = async (data) => {   
+        const files = Array.from(imageInputRef.current?.files);
+
+        if ( files.length === 0) {
+            alert("Please select at least one scan image.");
+            return;
+        }
+
+        const fileTypes = ["image/jpeg", "image/png", "image/jpg"];
+        for (const file of files) {
+            if (!fileTypes.includes(file.type)) {
+            alert("Please select an image file of the following types [jpg,jpeg,png].");
+            return;
+            }
+        }
+
+      
+        const maxSize = 5 * 1024 * 1024; // 5 MB
+        for (const file of files) {
+            if (file.size > maxSize) {
+              alert("Please select an image that is less than 5 MB.");
+              return;
+            }
+          }
+        
+      
+        const { error } = await supabase.from("scans").insert(data);
+        
+        setSuccessAlertIsVisible(true);
+        reset();
         setTimeout(() => {
-            setSuccessAlertIsVisible(false)
-        }, 3000)
-    }
+          setSuccessAlertIsVisible(false);
+        }, 3000);
+      };
+
+      
 
     return (
         <>
@@ -95,8 +127,8 @@ export default function Newscan (){
                                     </div>
                                 </div>
                                 <div className="mt-6">
-                                    <label htmlFor="image" className="mt-6 text-gray-700 dark:text-gray-300">Scan Images</label>
-                                    <input type="file" className="block w-full px-3 py-2 mt-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-700 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full dark:file:bg-gray-800 dark:file:text-gray-200 dark:text-gray-300 placeholder-gray-400/70 dark:placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:focus:border-blue-300" />
+                                    <label htmlFor="image"  className="mt-6 text-gray-700 dark:text-gray-300">Scan Images</label>
+                                    <input type="file" ref={imageInputRef} multiple className="block w-full px-3 py-2 mt-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg file:bg-gray-200 file:text-gray-700 file:text-sm file:px-4 file:py-1 file:border-none file:rounded-full dark:file:bg-gray-800 dark:file:text-gray-200 dark:text-gray-300 placeholder-gray-400/70 dark:placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:focus:border-blue-300"  />
                                 </div>
                                 { successAlertIsVisible ? <div className="w-full my-6 text-white bg-emerald-500">
                                     <div className="container flex items-center justify-between px-6 py-4 mx-auto">
