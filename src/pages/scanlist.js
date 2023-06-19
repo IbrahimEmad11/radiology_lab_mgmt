@@ -3,6 +3,7 @@ import Head from "next/head"
 import { useState } from "react"
 import Sidebar from "@/componenets/Sidebar"
 import { supabase } from "@/managers/supabase"
+import { useRouter } from "next/router"
 
 export const getServerSideProps = async ({ query }) => {
 
@@ -39,14 +40,15 @@ export const getServerSideProps = async ({ query }) => {
 const numScansPerPage = 5
 
 export default function Scanlist({ scansData, statusIndex }) {
+
+  const router = useRouter()
+
   const [pageIndex, setPageIndex] = useState(0)
   const numOfPages = Math.ceil(scansData.length / numScansPerPage)
   const currentStatusStyle = "px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300"
   const normalStatusStyle = "px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
 
-
   const currentPageScans = scansData.slice(pageIndex * numScansPerPage, (pageIndex + 1) * numScansPerPage)
-  // console.log(currentPageScans)
 
   return (
     <>
@@ -184,7 +186,10 @@ export default function Scanlist({ scansData, statusIndex }) {
                           : "inline px-3 py-1 text-sm font-normal text-gray-500 bg-gray-100 rounded-full dark:text-gray-400 gap-x-2 dark:bg-gray-800"
                       }
                       return (
-                        <tr key={scan["id"]}>
+                        <tr key={scan["id"]}
+                            className="cursor-pointer"
+                          onClick={ () => router.push(`/viewscan/${scan["id"]}`)}
+                        >
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
                             <div>
                               <h2 className="font-medium text-gray-800 dark:text-white ">{scan["subject_name"]}</h2>
