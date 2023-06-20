@@ -21,6 +21,7 @@ export default function Login() {
         alert("A user with this email doesn't exist!")
       } else {
         if (data["password"] === password.trim()) {
+          localStorage.setItem("current_doctor", JSON.stringify(data));
           await router.push("/dashboard")
         } else {
           alert("Password entered is not correct!")
