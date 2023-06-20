@@ -3,6 +3,7 @@ import SelectStatus from "@/componenets/Status";
 import Status from "@/componenets/Status";
 import {supabase} from "@/managers/supabase";
 import {calculateAge} from "@/utils/calcAge";
+import {useState} from "react";
 
 export const getServerSideProps = async ({ params }) => {
   const { id: scanID } = params
@@ -20,17 +21,19 @@ export const getServerSideProps = async ({ params }) => {
 }
 
 export default function ViewScan({ scanData }) {
+  const [isCompleted, setIsCompleted] = useState(scanData["completed"])
 
-  console.log(scanData)
   return (
     <div className="flex">
       <Sidebar/>
       <div className="ml-72 mr-8 container mx-auto my-8">
         <section className="mt-5 max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
           <h1 className="text-lg font-semibold text-gray-700 capitalize dark:text-white">Scan Page</h1>
-
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Showing all the information about scan with id <u>{scanData["id"]}</u> { isCompleted ? "t": "f" }
+          </p>
           <form>
-            <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 mt-8 sm:grid-cols-2">
               <div>
                 <label className="text-gray-700 dark:text-gray-200">Subject Name</label>
                 <p
@@ -68,7 +71,7 @@ export default function ViewScan({ scanData }) {
               </div>
               
               <div>
-              <SelectStatus className="text-gray-700 dark:text-gray-200" htmlFor="Status">Status</SelectStatus>
+              <SelectStatus isCompleted={isCompleted} setStatus={setIsCompleted} scanId={scanData["id"]} className="text-gray-700 dark:text-gray-200" htmlFor="Status">Status</SelectStatus>
               </div>
 
               <div className="col-start-1 row-end-5 mb-10">
@@ -89,11 +92,11 @@ export default function ViewScan({ scanData }) {
               })}
             </div>
 
-            <div className="flex justify-end mt-6">
-              <button
-                className="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-blue-900 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">Print
-              </button>
-            </div>
+            {/*<div className="flex justify-end mt-6">*/}
+            {/*  <button*/}
+            {/*    className="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-blue-900 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">Print*/}
+            {/*  </button>*/}
+            {/*</div>*/}
           </form>
         </section>
       </div>

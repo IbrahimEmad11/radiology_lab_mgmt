@@ -1,15 +1,18 @@
 import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import {supabase} from "@/managers/supabase";
 
 const Status = [
   {
     id: 1,
     name: 'Completed',
+    completed: true
   },
   {
     id: 2,
     name: 'In Progress',
+    completed: false
   },
 ]
 
@@ -17,11 +20,15 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function SelectStatus() {
-  const [selected, setSelected] = useState(Status[1])
-  const handleSelection = (State) => {
+export default function SelectStatus({ isCompleted, setStatus, scanId }) {
+  const [selected, setSelected] = useState(isCompleted ? Status[0] : Status[1])
+  const handleSelection = async State => {
     setSelected(State);
-    // Here, you can perform any actions with the selected value, such as adding it to your database.
+    const { error } = await supabase
+      .from('scans')
+      .update({ completed: State.completed })
+      .eq('id', scanId)
+    setStatus(State.completed)
     console.log('Selected State:', State);
   };
   return (
