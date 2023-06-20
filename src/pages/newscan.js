@@ -8,7 +8,7 @@ import { supabase } from "@/managers/supabase"
 import {useState} from "react"
 import { useRef } from "react"
 import { uuid } from 'uuidv4'
-
+import { doctorsList, genders, scanTypes } from "@/utils/dummyData";
 
 const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,8 +19,14 @@ export default function Newscan (){
     const { register, handleSubmit, formState: { errors }, reset } = useForm()
     const [successAlertIsVisible, setSuccessAlertIsVisible] = useState(false)
     const imageInputRef = useRef();
+    const [gender, setGender] = useState(genders[0])
+    const [doctor, setDoctor] = useState(doctorsList[0])
+    const [scanType, setScanType] = useState(scanTypes[0])
 
     const onSubmit = async (data) => {
+        data["subject_sex"] = gender.name
+        data["scan_type"] = scanType.name
+        data["scan_doctor"] = doctor.name
 
         const files = Array.from(imageInputRef.current?.files);
 
@@ -73,6 +79,20 @@ export default function Newscan (){
       };
 
 
+    const handleGenderSelection = (givenGender) => {
+        setGender(givenGender)
+        console.log(givenGender)
+    }
+    const handleDoctorSelection = (givenDoctor) => {
+        setDoctor(givenDoctor)
+        console.log(givenDoctor)
+    }
+    const handleScanTypeSelection = (givenScanType) => {
+        setScanType(givenScanType)
+        console.log(givenScanType)
+    }
+
+
     return (
         <>
             <Head>
@@ -106,7 +126,7 @@ export default function Newscan (){
                                     <input name="subject_address" {...register("subject_address", { required: true })} id="address" type="text" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
                                 </div>
                                 <div>
-                                    <SelectSex className="text-gray-700 dark:text-gray-200" htmlFor="sex">Sex</SelectSex>
+                                    <SelectSex currentValue={gender} handleGenderSelection={handleGenderSelection} className="text-gray-700 dark:text-gray-200" htmlFor="sex">Sex</SelectSex>
                                 </div>
                                 <div>
                                     <label className="text-gray-700 dark:text-gray-200" htmlFor="phone">Phone</label>
@@ -123,11 +143,11 @@ export default function Newscan (){
                                     </div>
 
                                     <div>
-                                        <DoctorMenu className="text-gray-700 dark:text-gray-200" htmlFor="scan_doctor">Doctor</DoctorMenu>
+                                        <DoctorMenu currentValue={doctor} handleDoctorSelection={handleDoctorSelection} className="text-gray-700 dark:text-gray-200" htmlFor="scan_doctor">Doctor</DoctorMenu>
                                     </div>
 
                                     <div>
-                                        <ScanType className="text-gray-700 dark:text-gray-200" htmlFor="scan_type">Scan Type</ScanType>
+                                        <ScanType currentValue={scanType} handleScanTypeSelection={handleScanTypeSelection} className="text-gray-700 dark:text-gray-200" htmlFor="scan_type">Scan Type</ScanType>
                                     </div>
 
                                     <div>

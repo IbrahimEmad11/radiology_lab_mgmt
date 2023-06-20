@@ -76,7 +76,7 @@ export default function ViewScan({ scanData }) {
               {scanData["images"].map((url) => {
                 return (
                   <div key={url}>
-                    <img alt="Image" className="h-auto max-w-full rounded-lg" src={`https://ctrmxfuwfmabaytdoykh.supabase.co/storage/v1/object/public/images/${url}`}/>
+                    <img alt="Image" className="h-full w-full max-w-full rounded-lg" src={`https://ctrmxfuwfmabaytdoykh.supabase.co/storage/v1/object/public/images/${url}`}/>
                   </div>
                 )
               })}

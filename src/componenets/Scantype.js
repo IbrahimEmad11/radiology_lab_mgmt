@@ -1,46 +1,23 @@
 import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-
-const types = [
-  {
-    id: 1,
-    name: 'CT',
-  },
-  {
-    id: 2,
-    name: 'MRI',
-  },
-  {
-    id: 2,
-    name: 'PET',
-  },
-  {
-    id: 2,
-    name: 'X-ray',
-  },
-]
+import {scanTypes} from "@/utils/dummyData";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function ScanType() {
-  const [selected, setSelected] = useState(types[1])
-  const handleSelection = (type) => {
-    setSelected(type);
-    // Here, you can perform any actions with the selected value, such as adding it to your database.
-    console.log('Selected type:', type);
-  };
+export default function ScanType({ currentValue, handleScanTypeSelection }) {
+
   return (
-    <Listbox value={selected} onChange={handleSelection}>
+    <Listbox value={currentValue} onChange={handleScanTypeSelection}>
       {({ open }) => (
         <>
           <Listbox.Label className="text-gray-700 dark:text-gray-200">Scan Type</Listbox.Label>
           <div className="relative mt-2">
             <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 dark:text-gray-200 dark:bg-gray-800 dark:ring-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
               <span className="flex items-center">
-                <span className="ml-3 block truncate">{selected.name}</span>
+                <span className="ml-3 block truncate">{currentValue.name}</span>
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                 <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -55,7 +32,7 @@ export default function ScanType() {
               leaveTo="opacity-0"
             >
               <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:text-gray-200 dark:bg-gray-800 dark:ring-gray-200">
-                {types.map((type) => (
+                {scanTypes.map((type) => (
                   <Listbox.Option
                     key={type.id}
                     className={({ active }) =>
@@ -66,17 +43,17 @@ export default function ScanType() {
                     }
                     value={type}
                   >
-                    {({ selected, active }) => (
+                    {({ currentValue, active }) => (
                       <>
                         <div className="flex items-center">
                           <span
-                            className={classNames(selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}
+                            className={classNames(currentValue ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}
                           >
                             {type.name}
                           </span>
                         </div>
 
-                        {selected ? (
+                        {currentValue ? (
                           <span
                             className={classNames(
                               active ? 'text-white' : 'text-indigo-600' ,
