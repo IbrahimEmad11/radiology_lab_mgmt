@@ -46,7 +46,7 @@ export default function Subjects({ subjectsData }) {
                 <h2 className="text-lg font-medium text-gray-800 dark:text-white">Subjects List</h2>
 
                 <span
-                  className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">{`${subjectsData.length} Doctors`}</span>
+                  className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">{`${subjectsData.length} Subjects`}</span>
               </div>
 
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">A list of all the subjects recorded in
@@ -95,22 +95,22 @@ export default function Subjects({ subjectsData }) {
                     <tr>
                       <th scope="col"
                           className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        Doctor
+                        Name
                       </th>
 
                       <th scope="col"
                           className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        Specialization
+                        Email
+                      </th>
+
+                      <th scope="col"
+                          className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        Sex
                       </th>
 
                       <th scope="col"
                           className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         Phone
-                      </th>
-
-                      <th scope="col"
-                          className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        Email
                       </th>
 
                       <th scope="col"
@@ -121,42 +121,41 @@ export default function Subjects({ subjectsData }) {
                     </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                    {/*{currentPageSubjects.map(doctor => {*/}
-                    {/*  return (*/}
-                    {/*    <tr key={doctor["id"]}*/}
-                    {/*        className="cursor-pointer"*/}
-                    {/*        onClick={() => router.push(`/viewdoctor/${doctor["id"]}`)}*/}
-                    {/*    >*/}
-                    {/*      <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">*/}
-                    {/*        <div>*/}
-                    {/*          <h2 className="font-medium text-gray-800 dark:text-white ">{doctor["name"]}</h2>*/}
-                    {/*          <p className="text-sm font-normal text-gray-600 dark:text-gray-400">21 Years*/}
-                    {/*            | {doctor["sex"]}</p>*/}
-                    {/*        </div>*/}
-                    {/*      </td>*/}
-                    {/*      <td className="px-12 py-4 text-sm font-medium whitespace-nowrap">*/}
-                    {/*        <div>*/}
-                    {/*          <h4 className="text-gray-700 dark:text-gray-200">{doctor["specialization"]}</h4>*/}
-                    {/*        </div>*/}
-                    {/*      </td>*/}
-                    {/*      <td className="px-4 py-4 text-sm whitespace-nowrap">*/}
-                    {/*        <div>*/}
-                    {/*          <h4 className="text-gray-700 dark:text-gray-200">{doctor["phone"]}</h4>*/}
-                    {/*        </div>*/}
-                    {/*      </td>*/}
-                    {/*      <td className="px-4 py-4 text-sm whitespace-nowrap">*/}
-                    {/*        <div>*/}
-                    {/*          <h4 className="text-gray-700 dark:text-gray-200">{doctor["email"]}</h4>*/}
-                    {/*        </div>*/}
-                    {/*      </td>*/}
-                    {/*      <td className="px-4 py-4 text-sm whitespace-nowrap">*/}
-                    {/*        <div>*/}
-                    {/*          <h4 className="text-gray-700 dark:text-gray-200">{doctor["address"]}</h4>*/}
-                    {/*        </div>*/}
-                    {/*      </td>*/}
-                    {/*    </tr>*/}
-                    {/*  )*/}
-                    {/*})}*/}
+                    {currentPageSubjects.map(subject => {
+                      return (
+                        <tr key={subject["id"]}
+                            className="cursor-pointer"
+                            onClick={() => router.push(`/viewsubject/${subject["id"]}`)}
+                        >
+                          <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                            <div>
+                              <h2 className="font-medium text-gray-800 dark:text-white ">{subject["name"]}</h2>
+                              <p className="text-sm font-normal text-gray-600 dark:text-gray-400">21 Years</p>
+                            </div>
+                          </td>
+                          <td className="px-12 py-4 text-sm whitespace-nowrap">
+                            <div>
+                              <h4 className="text-gray-700 dark:text-gray-200">{subject["email"]}</h4>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-sm whitespace-nowrap">
+                            <div>
+                              <h4 className="text-gray-700 dark:text-gray-200">{subject["sex"]}</h4>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-sm whitespace-nowrap">
+                            <div>
+                              <h4 className="text-gray-700 dark:text-gray-200">{subject["phone"]}</h4>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-sm whitespace-nowrap">
+                            <div>
+                              <h4 className="text-gray-700 dark:text-gray-200">{subject["address"]}</h4>
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })}
                     </tbody>
                   </table>
                 </div>
