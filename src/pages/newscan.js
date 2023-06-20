@@ -9,6 +9,7 @@ import {useState} from "react"
 import {useRef} from "react"
 import {uuid} from 'uuidv4'
 import {genders, scanTypes} from "@/utils/dummyData";
+import Link from "next/link";
 
 const handleSubmit = (e) => {
   e.preventDefault();
@@ -34,6 +35,12 @@ export default function Newscan({doctorsList}) {
   const [gender, setGender] = useState(genders[0])
   const [doctor, setDoctor] = useState(doctorsList[0])
   const [scanType, setScanType] = useState(scanTypes[0])
+
+  const [isNewSubject, setIsNewSubject] = useState(true)
+
+  const [userSearchInput, setUserSearchInput] = useState("")
+  const [searchedUsers, setSearchedUsers] = useState([])
+  const [currentSearchSubject, setCurrentSearchSubject] = useState(null)
 
   const onSubmit = async (data) => {
     data["subject_sex"] = gender.name
@@ -79,19 +86,25 @@ export default function Newscan({doctorsList}) {
     data["images"] = filesUrls
 
 
-    const {data: subjectData, errorOnSubjects} = await supabase
-      .from("subjects")
-      .insert(
-        {
-          name: data["subject_name"],
-          email: data["subject_email"],
-          birth_date: data["subject_birth_date"],
-          sex: data["subject_sex"],
-          address: data["subject_address"],
-          phone: data["subject_phone"],
-        }
-      ).select()
-      .maybeSingle()
+    let subjectID = null;
+    if (isNewSubject) {
+      const {data: subjectData, errorOnSubjects} = await supabase
+        .from("subjects")
+        .insert(
+          {
+            name: data["subject_name"],
+            email: data["subject_email"],
+            birth_date: data["subject_birth_date"],
+            sex: data["subject_sex"],
+            address: data["subject_address"],
+            phone: data["subject_phone"],
+          }
+        ).select()
+        .maybeSingle()
+      subjectID = subjectData["id"]
+    } else {
+      subjectID = currentSearchSubject
+    }
 
 
     const {errorOnScans} = await supabase
@@ -100,7 +113,7 @@ export default function Newscan({doctorsList}) {
         {
           conclusion: data["conclusion"],
           images: data["images"],
-          subject: subjectData["id"],
+          subject: subjectID,
           date: data["scan_date"],
           type: data["scan_type"],
           doctor: data["scan_doctor"],
@@ -108,9 +121,12 @@ export default function Newscan({doctorsList}) {
         }
       )
 
-    console.log(errorOnSubjects, errorOnScans)
+    console.log(errorOnScans)
 
     setSuccessAlertIsVisible(true);
+    setUserSearchInput("")
+    setSearchedUsers([])
+    setCurrentSearchSubject(null)
     reset();
     setTimeout(() => {
       setSuccessAlertIsVisible(false);
@@ -131,7 +147,19 @@ export default function Newscan({doctorsList}) {
     console.log(givenScanType)
   }
 
+  const selectedTabStyle = "inline-flex items-center h-10 px-4 -mb-px text-sm text-center text-blue-600 bg-transparent border-b-2 border-blue-500 sm:text-base dark:border-blue-400 dark:text-blue-300 whitespace-nowrap focus:outline-none"
+  const nonSelectedTabStyle = "inline-flex items-center h-10 px-4 -mb-px text-sm text-center text-gray-700 bg-transparent border-b-2 border-transparent sm:text-base dark:text-white whitespace-nowrap cursor-base focus:outline-none hover:border-gray-400"
 
+  const handleSearchForUser = async () => {
+    const { data, error } = await supabase
+      .from("subjects")
+      .select()
+      .textSearch("name", userSearchInput)
+
+    setSearchedUsers(data)
+  }
+
+  console.log(currentSearchSubject)
   return (<>
       <Head>
         <title>ResonanceM | Add new scan</title>
@@ -145,54 +173,170 @@ export default function Newscan({doctorsList}) {
             <div
               className="flex mt-4 overflow-x-auto overflow-y-hidden whitespace-nowrap ">
               <button
-                className="inline-flex items-center h-10 px-4 -mb-px text-sm text-center text-blue-600 bg-transparent border-b-2 border-blue-500 sm:text-base dark:border-blue-400 dark:text-blue-300 whitespace-nowrap focus:outline-none">
+                onClick={() => setIsNewSubject(true)}
+                className={ isNewSubject ? selectedTabStyle : nonSelectedTabStyle }>
                 New Subject
               </button>
 
               <button
-                className="inline-flex items-center h-10 px-4 -mb-px text-sm text-center text-gray-700 bg-transparent border-b-2 border-transparent sm:text-base dark:text-white whitespace-nowrap cursor-base focus:outline-none hover:border-gray-400">
+                onClick={() => setIsNewSubject(false)}
+                className={ !isNewSubject ? selectedTabStyle : nonSelectedTabStyle }>
                 Existing Subject
               </button>
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 border p-4 pt-6 pb-8">
-                <div>
-                  <label className="text-gray-700 dark:text-gray-200" htmlFor="subjectName">Subject name</label>
-                  <input name="subject_name" {...register("subject_name", {required: true})} required id="subjectName"
-                         type="text"
-                         className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
-                </div>
+              { isNewSubject ?
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 border p-4 pt-6 pb-8">
+                  <div>
+                    <label className="text-gray-700 dark:text-gray-200" htmlFor="subjectName">Subject name</label>
+                    <input name="subject_name" {...register("subject_name", {required: isNewSubject})} required={isNewSubject} id="subjectName"
+                           type="text"
+                           className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
+                  </div>
 
-                <div>
-                  <label className="text-gray-700 dark:text-gray-200" htmlFor="emailAddress">Email Address</label>
-                  <input name="subject_email" {...register("subject_email", {required: true})} id="emailAddress"
-                         type="email"
-                         className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
-                </div>
+                  <div>
+                    <label className="text-gray-700 dark:text-gray-200" htmlFor="emailAddress">Email Address</label>
+                    <input name="subject_email" {...register("subject_email", {required: isNewSubject})} required={isNewSubject} id="emailAddress"
+                           type="email"
+                           className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
+                  </div>
 
-                <div>
-                  <label htmlFor="Birthday" className="block text-sm text-gray-700 dark:text-gray-300">Birthday</label>
-                  <input name="subject_birth_date" {...register("subject_birth_date", {required: true})} type="date"
-                         placeholder="John Doe"
-                         className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
-                </div>
+                  <div>
+                    <label htmlFor="Birthday" className="block text-sm text-gray-700 dark:text-gray-300">Birthday</label>
+                    <input name="subject_birth_date" {...register("subject_birth_date", {required: isNewSubject})} required={isNewSubject} type="date"
+                           placeholder="John Doe"
+                           className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
+                  </div>
 
-                <div>
-                  <label className="text-gray-700 dark:text-gray-200" htmlFor="address">Address</label>
-                  <input name="subject_address" {...register("subject_address", {required: true})} id="address"
-                         type="text"
-                         className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
+                  <div>
+                    <label className="text-gray-700 dark:text-gray-200" htmlFor="address">Address</label>
+                    <input name="subject_address" {...register("subject_address", {required: isNewSubject})} required={isNewSubject} id="address"
+                           type="text"
+                           className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
+                  </div>
+                  <div>
+                    <SelectSex currentValue={gender} handleGenderSelection={handleGenderSelection}
+                               className="text-gray-700 dark:text-gray-200" htmlFor="sex">Sex</SelectSex>
+                  </div>
+                  <div>
+                    <label className="text-gray-700 dark:text-gray-200" htmlFor="phone">Phone</label>
+                    <input name="subject_phone" {...register("subject_phone", {required: isNewSubject})} required={isNewSubject} id="phone" type="text"
+                           className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
+                  </div>
                 </div>
-                <div>
-                  <SelectSex currentValue={gender} handleGenderSelection={handleGenderSelection}
-                             className="text-gray-700 dark:text-gray-200" htmlFor="sex">Sex</SelectSex>
+              :
+                <div className="border p-4 pt-6 pb-8">
+                  <div>
+                    <label className="text-gray-700 dark:text-gray-200" htmlFor="subjectName">Search By Name</label>
+                    <div className="flex max-h-12">
+                      <input name="subject_name" required={!isNewSubject} id="subjectName"
+                             onChange={(e) => setUserSearchInput(e.target.value)}
+                             type="text"
+                             className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
+                      <button
+                        onClick={handleSearchForUser}
+                        className="flex align-middle justify-center w-1/2 m-2 mt-2.5 px-5 pt-2 h-9 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                        <span>Search</span>
+                      </button>
+                    </div>
+                  </div>
+                  {
+                    searchedUsers.length > 0 ?
+                      <div className="flex flex-col mt-6">
+                        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                          <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                            <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+                              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead className="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                  <th scope="col"
+                                      className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    Name
+                                  </th>
+
+                                  <th scope="col"
+                                      className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    Email
+                                  </th>
+
+                                  <th scope="col"
+                                      className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    Sex
+                                  </th>
+
+                                  <th scope="col"
+                                      className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    Phone
+                                  </th>
+
+                                  <th scope="col"
+                                      className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    Address
+                                  </th>
+
+                                </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
+                                {searchedUsers.map(subject => {
+                                  const selectedStyle = "cursor-pointer bg-green-100"
+                                  const nonSelectedStyle = "cursor-pointer"
+                                  return (
+                                    <tr key={subject["id"]}
+                                        className={currentSearchSubject === subject["id"] ? selectedStyle : nonSelectedStyle}
+                                        onClick={() => setCurrentSearchSubject(subject["id"])}
+                                    >
+                                      <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                                        <div>
+                                          <h2 className="font-medium text-gray-800 dark:text-white ">{subject["name"]} {subject["id"] === currentSearchSubject ? 't' : 'f'}</h2>
+                                          <p className="text-sm font-normal text-gray-600 dark:text-gray-400">21 Years</p>
+                                        </div>
+                                      </td>
+                                      <td className="px-12 py-4 text-sm whitespace-nowrap">
+                                        <div>
+                                          <h4 className="text-gray-700 dark:text-gray-200">{subject["email"]}</h4>
+                                        </div>
+                                      </td>
+                                      <td className="px-4 py-4 text-sm whitespace-nowrap">
+                                        <div>
+                                          <h4 className="text-gray-700 dark:text-gray-200">{subject["sex"]}</h4>
+                                        </div>
+                                      </td>
+                                      <td className="px-4 py-4 text-sm whitespace-nowrap">
+                                        <div>
+                                          <h4 className="text-gray-700 dark:text-gray-200">{subject["phone"]}</h4>
+                                        </div>
+                                      </td>
+                                      <td className="px-4 py-4 text-sm whitespace-nowrap">
+                                        <div>
+                                          <h4 className="text-gray-700 dark:text-gray-200">{subject["address"]}</h4>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )
+                                })}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      :
+                      <div
+                        className="mt-6 flex flex-col items-center rounded-xl bg-green-50 p-4 text-slate-800 shadow-sm dark:bg-slate-900 dark:text-slate-400 md:p-12">
+                        <div className="inline-flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="text-teal-900 dark:text-teal-400 w-4 h-4 mr-2 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24"
+                               stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor"
+                                  d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                          </svg>
+                          <h2 className="text-teal-900 dark:text-teal-400 text-xl font-semibold">Search for existing subject</h2>
+                        </div>
+                        <p className="mt-6 mb-6 max-w-2xl text-center text-slate-800 dark:text-teal-400">Ask the subject, in front of the desk, whether they have had a scan in this radiology lab before. If yes, start searching by their name. I no, switch to <u>New Subject</u> tab</p>
+                      </div>
+                  }
                 </div>
-                <div>
-                  <label className="text-gray-700 dark:text-gray-200" htmlFor="phone">Phone</label>
-                  <input name="subject_phone" {...register("subject_phone", {required: true})} id="phone" type="text"
-                         className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"/>
-                </div>
-              </div>
+              }
               <div className="mt-6 border-gray-300">
                 <h3 className="text-lg font-medium text-gray-700 capitalize dark:text-white">Scan Data</h3>
                 <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
