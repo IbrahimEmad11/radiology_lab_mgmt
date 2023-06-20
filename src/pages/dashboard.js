@@ -155,11 +155,11 @@ export default function Scanlist({ scansData }) {
               </div>
               <div className="col-span-4 px-8 pt-8 pb-2 bg-white rounded-lg shadow-md dark:bg-gray-800">
                 <h3 className="font-medium leading-6 text-gray-800 dark:text-white" id="modal-title">
-                  Scan Types Distribution
+                  Subjects' Age Distribution
                 </h3>
 
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                  Figure out how many scans were made for each scan type.
+                  Figure out how many scans were made for each age category.
                 </p>
                 <div className="mx-auto w-full h-80 p-2 pt-8">
                   <ResponsiveContainer width="100%" height="100%">
@@ -219,11 +219,11 @@ export default function Scanlist({ scansData }) {
 
               <div className="col-span-3 px-8 pt-8 pb-2 bg-white rounded-lg shadow-md dark:bg-gray-800">
                 <h3 className="font-medium leading-6 text-gray-800 dark:text-white" id="modal-title">
-                  Male vs Female Subjects
+                  Number of Scans Over The Year
                 </h3>
 
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                  See and compare how many male and female subjects have been scanned by your lab
+                  Plotting the number of scans made in each month of the current year
                 </p>
                 <div className="mx-auto w-full h-80 pt-8">
                   <ResponsiveContainer width="100%" height="100%">
