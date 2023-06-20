@@ -6,6 +6,7 @@ import {supabase} from "@/managers/supabase"
 import {useRouter} from "next/router"
 import {exporter} from "@/utils/dataManager";
 import {calculateAge} from "@/utils/calcAge";
+import UpdateSubject from "@/componenets/updateSubject";
 
 export const getServerSideProps = async ({query}) => {
 
@@ -14,6 +15,7 @@ export const getServerSideProps = async ({query}) => {
   const {data, error} = await supabase
     .from("subjects")
     .select()
+    .order('created_at')
 
   return {
     props: {
@@ -28,11 +30,25 @@ export default function Subjects({ subjectsData }) {
 
   const router = useRouter()
 
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false)
+  const [subjectToBeUpdated, setSubjectToBeUpdated] = useState(null)
+
   const [pageIndex, setPageIndex] = useState(0)
   const numOfPages = Math.ceil(subjectsData.length / numSubjectsPerPage)
 
   const currentPageSubjects = subjectsData.slice(pageIndex * numSubjectsPerPage, (pageIndex + 1) * numSubjectsPerPage)
-  console.log(currentPageSubjects)
+
+  const handleModalOpen = subject => {
+    setSubjectToBeUpdated(subject)
+    setIsUpdateModalVisible(true)
+  }
+
+
+  const handleModalClose = () => {
+    setSubjectToBeUpdated(null)
+    setIsUpdateModalVisible(false)
+    router.reload()
+  }
 
   return (
     <>
@@ -116,7 +132,7 @@ export default function Subjects({ subjectsData }) {
                       return (
                         <tr key={subject["id"]}
                             className="cursor-pointer"
-                            onClick={() => router.push(`/viewsubject/${subject["id"]}`)}
+                            onClick={() => handleModalOpen(subject)}
                         >
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
                             <div>
@@ -199,6 +215,7 @@ export default function Subjects({ subjectsData }) {
           </div>
         </section>
       </div>
+      { isUpdateModalVisible ? <UpdateSubject subject={subjectToBeUpdated} handleClose={handleModalClose} /> : null }
     </>
   );
 }
