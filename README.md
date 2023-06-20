@@ -3,18 +3,23 @@
 <p id="description">ResonanceM is designed to store and manage the data associated with ordering executing and reporting of radiology procedures. The user can add and show the scan with the doctor’s diagnosis. The system saves the history of the patient’s&nbsp;scans. The system can show overview of everything happening in your lab. the system shows statistics of how many male &amp; females have been scanned in my lab&nbsp;and&nbsp;scan&nbsp;types.</p>
 <hr>
 <h2>Project Screenshots:</h2>
+<h3>Login Page </h3>
 
 ![Login Page](/images/screenshots/1.png) 
 <hr>
+<h3>Dashboard Page </h3>
 
 ![Dashboard Page](/images/screenshots/2.png) 
 <hr>
+<h3>Scans List Page </h3>
 
 ![Scan List Page](/images/screenshots/3.png) 
 <hr>
+<h3>Add New Scan Page </h3>
 
 ![Add New Scan Page](/images/screenshots/4.png) 
 <hr>
+<h3>Edit Subject Data Page</h3>
 
 ![Edit Subject Data Page](/images/screenshots/5.png) 
 <hr>
