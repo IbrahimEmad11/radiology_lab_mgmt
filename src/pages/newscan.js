@@ -7,9 +7,7 @@ import ScanType from "@/componenets/Scantype"
 import { supabase } from "@/managers/supabase"
 import {useState} from "react"
 import { useRef } from "react"
-
-
-
+import { uuid } from 'uuidv4'
 
 
 const handleSubmit = (e) => {
@@ -22,10 +20,11 @@ export default function Newscan (){
     const [successAlertIsVisible, setSuccessAlertIsVisible] = useState(false)
     const imageInputRef = useRef();
 
-    const onSubmit = async (data) => {   
+    const onSubmit = async (data) => {
+
         const files = Array.from(imageInputRef.current?.files);
 
-        if ( files.length === 0) {
+        if (files.length === 0) {
             alert("Please select at least one scan image.");
             return;
         }
@@ -37,7 +36,6 @@ export default function Newscan (){
             return;
             }
         }
-
       
         const maxSize = 5 * 1024 * 1024; // 5 MB
         for (const file of files) {
@@ -46,9 +44,26 @@ export default function Newscan (){
               return;
             }
           }
-        
+
+        const filesUrls = []
+        for (const file of files) {
+            const url = `public/${uuid()}/${file.name}`
+            filesUrls.push(url)
+            const { data, error } = await supabase
+              .storage
+              .from('images')
+              .upload(url, file, {
+                  cacheControl: '3600',
+                  upsert: false
+              })
+            console.log(error)
+        }
+
+        data["images"] = filesUrls
       
-        const { error } = await supabase.from("scans").insert(data);
+        const { error } = await supabase
+          .from("scans")
+          .insert(data);
         
         setSuccessAlertIsVisible(true);
         reset();
@@ -57,7 +72,6 @@ export default function Newscan (){
         }, 3000);
       };
 
-      
 
     return (
         <>
