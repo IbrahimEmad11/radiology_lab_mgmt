@@ -36,7 +36,7 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 
 function countObjectsByMonth(arr) {
   return arr.reduce((acc, obj) => {
-    const month = new Date(obj["scan_date"]).getMonth();
+    const month = new Date(obj["date"]).getMonth();
     acc[month] = (acc[month] || 0) + 1;
     return acc;
   }, []);
@@ -45,7 +45,7 @@ function countObjectsByMonth(arr) {
 function countScanTypes(values, objects) {
   const result = [];
   values.forEach((value) => {
-    const count = objects.filter((obj) => obj["scan_type"] === value).length;
+    const count = objects.filter((obj) => obj["type"] === value).length;
     result.push({ name: value, pv: count });
   });
   return result;
@@ -63,55 +63,38 @@ function calculateAge(birthdate) {
 export const getServerSideProps = async ({ query }) => {
 
   let scansData;
-  let statusIndex = 0
-  const requiredScanStatus = query.completed
 
-
-  if (requiredScanStatus && (requiredScanStatus === "true" || requiredScanStatus === "false")) {
-    const isCompleted =  requiredScanStatus === "true"
-
-    statusIndex = isCompleted ? 1 : 2
-
-    const { data, error } = await supabase
-      .from("scans")
-      .select()
-      .eq("scan_completed", isCompleted)
-    scansData = data
-  } else {
-    const { data, error } = await supabase
-      .from("scans")
-      .select()
-    scansData = data
-  }
+  const { data, error } = await supabase
+    .from("scans")
+    .select("*, doctors ( name ), subjects ( * )")
+  scansData = data
 
   return {
     props: {
-      scansData: scansData ?? [],
-      statusIndex,
+      scansData: scansData ?? []
     }
   }
 }
 
-const numScansPerPage = 5
-
-export default function Scanlist({ scansData, statusIndex }) {
+export default function Scanlist({ scansData }) {
 
   const router = useRouter()
 
   const chartData1 = [
-    { name: 'Male', value: scansData.filter(scan => scan["subject_sex"] === "Male").length },
-    { name: 'Female', value: scansData.filter(scan => scan["subject_sex"] === "Female").length },
+    { name: 'Male', value: scansData.filter(scan => scan["subjects"]["sex"] === "Male").length },
+    { name: 'Female', value: scansData.filter(scan => scan["subjects"]["sex"] === "Female").length },
   ];
 
+  // I should have used reduce here but anywaysss
   const chartData2 = [
-    { name: "10:20", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 10 && calculateAge(scan["subject_birth_date"]) < 20).length},
-    { name: "20:30", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 20 && calculateAge(scan["subject_birth_date"]) < 30).length},
-    { name: "30:40", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 30 && calculateAge(scan["subject_birth_date"]) < 40).length},
-    { name: "40:50", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 40 && calculateAge(scan["subject_birth_date"]) < 50).length},
-    { name: "50:60", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 50 && calculateAge(scan["subject_birth_date"]) < 60).length},
-    { name: "60:70", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 60 && calculateAge(scan["subject_birth_date"]) < 70).length},
-    { name: "70:80", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 70 && calculateAge(scan["subject_birth_date"]) < 80).length},
-    { name: "+80", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 80).length},
+    { name: "10:20", pv: scansData.filter(scan => calculateAge(scan["subjects"]["birth_date"]) >= 10 && calculateAge(scan["subjects"]["birth_date"]) < 20).length},
+    { name: "20:30", pv: scansData.filter(scan => calculateAge(scan["subjects"]["birth_date"]) >= 20 && calculateAge(scan["subjects"]["birth_date"]) < 30).length},
+    { name: "30:40", pv: scansData.filter(scan => calculateAge(scan["subjects"]["birth_date"]) >= 30 && calculateAge(scan["subjects"]["birth_date"]) < 40).length},
+    { name: "40:50", pv: scansData.filter(scan => calculateAge(scan["subjects"]["birth_date"]) >= 40 && calculateAge(scan["subjects"]["birth_date"]) < 50).length},
+    { name: "50:60", pv: scansData.filter(scan => calculateAge(scan["subjects"]["birth_date"]) >= 50 && calculateAge(scan["subjects"]["birth_date"]) < 60).length},
+    { name: "60:70", pv: scansData.filter(scan => calculateAge(scan["subjects"]["birth_date"]) >= 60 && calculateAge(scan["subjects"]["birth_date"]) < 70).length},
+    { name: "70:80", pv: scansData.filter(scan => calculateAge(scan["subjects"]["birth_date"]) >= 70 && calculateAge(scan["subjects"]["birth_date"]) < 80).length},
+    { name: "+80", pv: scansData.filter(scan => calculateAge(scan["subjects"]["birth_date"]) >= 80).length},
   ]
 
   const scanTypeNames = scanTypes.map(scanType => scanType.name)

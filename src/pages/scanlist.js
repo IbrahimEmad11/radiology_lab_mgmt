@@ -19,13 +19,13 @@ export const getServerSideProps = async ({ query }) => {
 
     const { data, error } = await supabase
       .from("scans")
-      .select("*, doctors ( name )")
-      .eq("scan_completed", isCompleted)
+      .select("*, doctors ( name ), subjects ( * )")
+      .eq("completed", isCompleted)
     scansData = data
   } else {
     const { data, error } = await supabase
       .from("scans")
-      .select("*, doctors ( name )")
+      .select("*, doctors ( name ), subjects ( * )")
     scansData = data
   }
 
@@ -40,6 +40,8 @@ export const getServerSideProps = async ({ query }) => {
 const numScansPerPage = 5
 
 export default function Scanlist({ scansData, statusIndex }) {
+
+  console.log(scansData)
 
   const router = useRouter()
   const [pageIndex, setPageIndex] = useState(0)
@@ -150,7 +152,7 @@ export default function Scanlist({ scansData, statusIndex }) {
                     <tr>
                       <th scope="col"
                           className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        Patient
+                        Subject
                       </th>
 
                       <th scope="col"
@@ -177,10 +179,10 @@ export default function Scanlist({ scansData, statusIndex }) {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                     { currentPageScans.map(scan => {
-                      const scanDateString = new Date(scan["scan_date"]).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+                      const scanDateString = new Date(scan["date"]).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
                       const scanStatus = {
-                        asString: Boolean(scan["scan_completed"]) === true ? "Completed" : "In Progress",
-                        style: Boolean(scan["scan_completed"]) === true
+                        asString: Boolean(scan["completed"]) === true ? "Completed" : "In Progress",
+                        style: Boolean(scan["completed"]) === true
                           ? "inline px-3 py-1 text-sm font-normal rounded-full text-emerald-500 gap-x-2 bg-emerald-100/60 dark:bg-gray-800"
                           : "inline px-3 py-1 text-sm font-normal text-gray-500 bg-gray-100 rounded-full dark:text-gray-400 gap-x-2 dark:bg-gray-800"
                       }
@@ -191,8 +193,8 @@ export default function Scanlist({ scansData, statusIndex }) {
                         >
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
                             <div>
-                              <h2 className="font-medium text-gray-800 dark:text-white ">{scan["subject_name"]}</h2>
-                              <p className="text-sm font-normal text-gray-600 dark:text-gray-400">21 Years | {scan["subject_sex"]}</p>
+                              <h2 className="font-medium text-gray-800 dark:text-white ">{scan["subjects"]["name"]}</h2>
+                              <p className="text-sm font-normal text-gray-600 dark:text-gray-400">21 Years | {scan["subjects"]["sex"]}</p>
                             </div>
                           </td>
                           <td className="px-12 py-4 text-sm font-medium whitespace-nowrap">
@@ -203,8 +205,8 @@ export default function Scanlist({ scansData, statusIndex }) {
                           </td>
                           <td className="px-4 py-4 text-sm whitespace-nowrap">
                             <div>
-                              <h4 className="text-gray-700 dark:text-gray-200">{scan["scan_type"]}</h4>
-                              <p className="text-gray-500 dark:text-gray-400">{scan["scan_part"]}</p>
+                              <h4 className="text-gray-700 dark:text-gray-200">{scan["type"]}</h4>
+                              <p className="text-gray-500 dark:text-gray-400">{scan["part"]}</p>
                             </div>
                           </td>
                           <td className="px-4 py-4 text-sm whitespace-nowrap">
