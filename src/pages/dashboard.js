@@ -18,6 +18,7 @@ import {
   YAxis
 } from "recharts"
 import {scanTypes} from "@/utils/dummyData";
+import {calculateAge} from "@/utils/calcAge";
 
 const COLORS = ['#0088FE', '#FF8042']
 
@@ -51,14 +52,7 @@ function countScanTypes(values, objects) {
   return result;
 }
 
-function calculateAge(birthdate) {
-  const birthYear = new Date(birthdate).getFullYear();
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const age = currentYear - birthYear;
-  const birthdateThisYear = new Date(currentYear, now.getMonth(), now.getDate()) >= new Date(birthdate);
-  return birthdateThisYear ? age : age - 1;
-}
+
 
 export const getServerSideProps = async ({ query }) => {
 

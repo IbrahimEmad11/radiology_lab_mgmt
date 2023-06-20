@@ -5,6 +5,7 @@ import Sidebar from "@/componenets/Sidebar"
 import {supabase} from "@/managers/supabase"
 import {useRouter} from "next/router"
 import {exporter} from "@/utils/dataManager";
+import {calculateAge} from "@/utils/calcAge";
 
 export const getServerSideProps = async ({query}) => {
 
@@ -120,7 +121,7 @@ export default function Subjects({ subjectsData }) {
                           <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
                             <div>
                               <h2 className="font-medium text-gray-800 dark:text-white ">{subject["name"]}</h2>
-                              <p className="text-sm font-normal text-gray-600 dark:text-gray-400">21 Years</p>
+                              <p className="text-sm font-normal text-gray-600 dark:text-gray-400">{calculateAge(subject["birth_date"])} Years</p>
                             </div>
                           </td>
                           <td className="px-12 py-4 text-sm whitespace-nowrap">
