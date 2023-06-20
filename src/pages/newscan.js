@@ -287,7 +287,7 @@ export default function Newscan({doctorsList}) {
                                     >
                                       <td className="px-4 py-4 text-sm font-medium whitespace-nowrap">
                                         <div>
-                                          <h2 className="font-medium text-gray-800 dark:text-white ">{subject["name"]} {subject["id"] === currentSearchSubject ? 't' : 'f'}</h2>
+                                          <h2 className="font-medium text-gray-800 dark:text-white ">{subject["name"]}</h2>
                                           <p className="text-sm font-normal text-gray-600 dark:text-gray-400">21 Years</p>
                                         </div>
                                       </td>
