@@ -19,13 +19,13 @@ export const getServerSideProps = async ({ query }) => {
 
     const { data, error } = await supabase
       .from("scans")
-      .select()
+      .select("*, doctors ( name )")
       .eq("scan_completed", isCompleted)
     scansData = data
   } else {
     const { data, error } = await supabase
       .from("scans")
-      .select()
+      .select("*, doctors ( name )")
     scansData = data
   }
 
@@ -42,7 +42,6 @@ const numScansPerPage = 5
 export default function Scanlist({ scansData, statusIndex }) {
 
   const router = useRouter()
-
   const [pageIndex, setPageIndex] = useState(0)
   const numOfPages = Math.ceil(scansData.length / numScansPerPage)
   const currentStatusStyle = "px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300"
@@ -210,7 +209,7 @@ export default function Scanlist({ scansData, statusIndex }) {
                           </td>
                           <td className="px-4 py-4 text-sm whitespace-nowrap">
                             <div>
-                              <h4 className="text-gray-700 dark:text-gray-200">{`Dr. ${scan["scan_doctor"]}`}</h4>
+                              <h4 className="text-gray-700 dark:text-gray-200">{`Dr. ${scan["doctors"]["name"]}`}</h4>
                             </div>
                           </td>
                           <td className="px-4 py-4 text-sm whitespace-nowrap">

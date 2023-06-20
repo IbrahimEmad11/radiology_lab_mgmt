@@ -8,13 +8,25 @@ import { supabase } from "@/managers/supabase"
 import {useState} from "react"
 import { useRef } from "react"
 import { uuid } from 'uuidv4'
-import { doctorsList, genders, scanTypes } from "@/utils/dummyData";
+import { genders, scanTypes } from "@/utils/dummyData";
 
 const handleSubmit = (e) => {
     e.preventDefault();
 }
 
-export default function Newscan (){
+export const getServerSideProps = async ({ query }) => {
+    const {data, error} = await supabase
+      .from("doctors")
+      .select()
+
+    return {
+        props: {
+            doctorsList: data ?? []
+        }
+    }
+}
+
+export default function Newscan ({ doctorsList }){
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm()
     const [successAlertIsVisible, setSuccessAlertIsVisible] = useState(false)
@@ -26,7 +38,7 @@ export default function Newscan (){
     const onSubmit = async (data) => {
         data["subject_sex"] = gender.name
         data["scan_type"] = scanType.name
-        data["scan_doctor"] = doctor.name
+        data["scan_doctor"] = doctor.id
 
         const files = Array.from(imageInputRef.current?.files);
 
@@ -143,7 +155,7 @@ export default function Newscan (){
                                     </div>
 
                                     <div>
-                                        <DoctorMenu currentValue={doctor} handleDoctorSelection={handleDoctorSelection} className="text-gray-700 dark:text-gray-200" htmlFor="scan_doctor">Doctor</DoctorMenu>
+                                        <DoctorMenu doctorsList={doctorsList} currentValue={doctor} handleDoctorSelection={handleDoctorSelection} className="text-gray-700 dark:text-gray-200" htmlFor="scan_doctor">Doctor</DoctorMenu>
                                     </div>
 
                                     <div>
