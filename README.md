@@ -4,9 +4,13 @@
 <hr>
 <h2>Project Screenshots:</h2>
 ![Login Page](/images/screenshots/1.png) 
+<hr>
 ![Dashboard Page](/images/screenshots/2.png) 
+<hr>
 ![Scan List Page](/images/screenshots/3.png) 
+<hr>
 ![Add New Scan Page](/images/screenshots/4.png) 
+<hr>
 ![Edit Subject Data Page](/images/screenshots/5.png) 
 <hr>
 <h2>🧐 Features</h2>
