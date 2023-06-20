@@ -56,7 +56,7 @@ export default function Scanlist({ scansData, statusIndex }) {
         <title>ResonanceM | Scans List</title>
       </Head>
       <div className="flex">
-        <Sidebar currentLinkId={0} />
+        <Sidebar currentLinkId={1} />
         <section className="ml-72 mr-8 container mx-auto my-8">
           <div className="sm:flex sm:items-center sm:justify-between">
             <div>
