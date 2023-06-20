@@ -1,98 +1,23 @@
-import Link from "next/link"
 import Head from "next/head"
-import { useState } from "react"
 import Sidebar from "@/componenets/Sidebar"
-import { supabase } from "@/managers/supabase"
-import { useRouter } from "next/router"
-import { PieChart, Pie, Legend, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from "recharts"
-
-const chartData1 = [
-  { name: 'Male', value: 400 },
-  { name: 'Female', value: 300 },
-];
-
-const chartData2 = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
-
-const chartData3 = [
-  {
-    name: 'Page A',
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    pv: 4300,
-    amt: 2100,
-  },
-];
+import {supabase} from "@/managers/supabase"
+import {useRouter} from "next/router"
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from "recharts"
+import {scanTypes} from "@/utils/dummyData";
 
 const COLORS = ['#0088FE', '#FF8042']
 
@@ -108,6 +33,32 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
     </text>
   );
 };
+
+function countObjectsByMonth(arr) {
+  return arr.reduce((acc, obj) => {
+    const month = new Date(obj["scan_date"]).getMonth();
+    acc[month] = (acc[month] || 0) + 1;
+    return acc;
+  }, []);
+}
+
+function countScanTypes(values, objects) {
+  const result = [];
+  values.forEach((value) => {
+    const count = objects.filter((obj) => obj["scan_type"] === value).length;
+    result.push({ name: value, pv: count });
+  });
+  return result;
+}
+
+function calculateAge(birthdate) {
+  const birthYear = new Date(birthdate).getFullYear();
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const age = currentYear - birthYear;
+  const birthdateThisYear = new Date(currentYear, now.getMonth(), now.getDate()) >= new Date(birthdate);
+  return birthdateThisYear ? age : age - 1;
+}
 
 export const getServerSideProps = async ({ query }) => {
 
@@ -147,6 +98,31 @@ export default function Scanlist({ scansData, statusIndex }) {
 
   const router = useRouter()
 
+  const chartData1 = [
+    { name: 'Male', value: scansData.filter(scan => scan["subject_sex"] === "Male").length },
+    { name: 'Female', value: scansData.filter(scan => scan["subject_sex"] === "Female").length },
+  ];
+
+  const chartData2 = [
+    { name: "10:20", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 10 && calculateAge(scan["subject_birth_date"]) < 20).length},
+    { name: "20:30", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 20 && calculateAge(scan["subject_birth_date"]) < 30).length},
+    { name: "30:40", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 30 && calculateAge(scan["subject_birth_date"]) < 40).length},
+    { name: "40:50", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 40 && calculateAge(scan["subject_birth_date"]) < 50).length},
+    { name: "50:60", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 50 && calculateAge(scan["subject_birth_date"]) < 60).length},
+    { name: "60:70", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 60 && calculateAge(scan["subject_birth_date"]) < 70).length},
+    { name: "70:80", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 70 && calculateAge(scan["subject_birth_date"]) < 80).length},
+    { name: "+80", pv: scansData.filter(scan => calculateAge(scan["subject_birth_date"]) >= 80).length},
+  ]
+
+  const scanTypeNames = scanTypes.map(scanType => scanType.name)
+  const chartData4 = countScanTypes(scanTypeNames, scansData)
+
+  const chartData3 = []
+  const months = ["Jan", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  const countsArray = countObjectsByMonth(scansData)
+  for (let i = 0; i < months.length; i++) {
+    chartData3.push({ name: months[i], pv: countsArray[i] ?? 0 })
+  }
 
   return (
     <>
@@ -186,7 +162,7 @@ export default function Scanlist({ scansData, statusIndex }) {
                         cy="50%"
                         labelLine={false}
                         label={renderCustomizedLabel}
-                        outerRadius={100}
+                        outerRadius={120}
                         fill="#8884d8"
                         dataKey="value"
                       >
@@ -245,7 +221,7 @@ export default function Scanlist({ scansData, statusIndex }) {
                     <BarChart
                       width={300}
                       height={300}
-                      data={chartData2}
+                      data={chartData4}
                       margin={{
                         top: 5,
                         right: 0,

@@ -69,4 +69,16 @@ export const scanTypes = [
     id: 4,
     name: 'X-ray',
   },
+  {
+    id: 5,
+    name: 'Echo'
+  },
+  {
+    id: 6,
+    name: 'ECG/EKG'
+  },
+  {
+    id: 7,
+    name: 'US'
+  }
 ]
