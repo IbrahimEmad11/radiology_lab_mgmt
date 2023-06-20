@@ -8,7 +8,7 @@ export const getServerSideProps = async ({ params }) => {
 
   const { data, error } = await supabase
     .from("scans")
-    .select()
+    .select("*, doctors ( name ), subjects ( * )")
     .eq("id", scanID)
     .maybeSingle()
   return {
@@ -20,7 +20,7 @@ export const getServerSideProps = async ({ params }) => {
 
 export default function ViewScan({ scanData }) {
 
-
+  console.log(scanData)
   return (
     <div className="flex">
       <Sidebar/>
@@ -33,31 +33,31 @@ export default function ViewScan({ scanData }) {
               <div>
                 <label className="text-gray-700 dark:text-gray-200">Date</label>
                 <p
-                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">{scanData["scan_date"]}</p>
+                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">{scanData["date"]}</p>
               </div>
 
               <div>
                 <label className="text-gray-700 dark:text-gray-200">Subject Name</label>
                 <p
-                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 ">{scanData["subject_name"]}</p>
+                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 ">{scanData["subjects"]["name"]}</p>
               </div>
 
               <div>
                 <label className="text-gray-700 dark:text-gray-200">Sex</label>
                 <p
-                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 ">{scanData["subject_sex"]}</p>
+                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 ">{scanData["subjects"]["sex"]}</p>
               </div>
 
               <div>
                 <label className="text-gray-700 dark:text-gray-200">Age</label>
                 <p
-                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 ">{scanData["subject_birth_date"]}</p>
+                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 ">{scanData["subjects"]["birth_date"]}</p>
               </div>
 
               <div>
                 <label className="text-gray-700 dark:text-gray-200">Assigned Doctor</label>
                 <p
-                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 ">{scanData["scan_doctor"]}</p>
+                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 ">{scanData["doctors"]["name"]}</p>
               </div>
               
               <div>
