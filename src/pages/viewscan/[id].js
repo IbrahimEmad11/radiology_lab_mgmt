@@ -73,13 +73,13 @@ export default function ViewScan({ scanData }) {
             <h2 className="mt-5 text-lg font-semibold text-gray-700 capitalize dark:text-white">Images</h2>
 
             <div className="grid grid-cols-2 gap-2 m-10">
-              {/*{scan_data.imgs_urls.map((url) => {*/}
-              {/*  return (*/}
-              {/*    <div>*/}
-              {/*      <img className="h-auto max-w-full rounded-lg" src={url}/>*/}
-              {/*    </div>*/}
-              {/*  )*/}
-              {/*})}*/}
+              {scanData["images"].map((url) => {
+                return (
+                  <div key={url}>
+                    <img alt="Image" className="h-auto max-w-full rounded-lg" src={`https://ctrmxfuwfmabaytdoykh.supabase.co/storage/v1/object/public/images/${url}`}/>
+                  </div>
+                )
+              })}
             </div>
 
             <div className="flex justify-end mt-6">
