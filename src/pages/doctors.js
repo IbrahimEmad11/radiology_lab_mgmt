@@ -14,6 +14,7 @@ export const getServerSideProps = async ({query}) => {
   const {data, error} = await supabase
     .from("doctors")
     .select()
+    .order('created_at')
 
   return {
     props: {

@@ -23,11 +23,13 @@ export const getServerSideProps = async ({ query }) => {
       .from("scans")
       .select("*, doctors ( name ), subjects ( * )")
       .eq("completed", isCompleted)
+      .order('created_at')
     scansData = data
   } else {
     const { data, error } = await supabase
       .from("scans")
       .select("*, doctors ( name ), subjects ( * )")
+      .order('created_at')
     scansData = data
   }
 
