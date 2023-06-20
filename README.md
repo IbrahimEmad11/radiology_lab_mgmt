@@ -36,7 +36,15 @@ npm install
 npm run dev
 ```
  <hr> 
-  
+<h1>Models</h1>
+<h2>ER Model</h2>
+
+ ![ER Model](/images/ERM.png) 
+<hr>
+<h2>Class Diagram</h2>
+
+ ![Class Diagram](/images/Classdiagram.jpg)
+ <hr>
 <h2>💻 Built with</h2>
 
 Technologies used in the project:
@@ -47,3 +55,13 @@ Technologies used in the project:
 *   React
 *   Supabase
 *   JavaScript
+
+<hr>
+<h1>👨‍💻 Contributions</h1>
+
+* Amir Hesham
+* Ibrahim Emad
+* Mohamed Ibrahim
+* Mohamed Mosilhe
+* Mariam Hatem
+* Omar Mohamed
